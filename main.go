@@ -9,7 +9,7 @@ import (
 	"regexp"
 )
 
-// GetHTML : returns the html content of a specified url
+// GetHTML : returns the html content of a specific url
 func GetHTML(url string) string {
 	resp, err := http.Get(url)
 	// handle the error
