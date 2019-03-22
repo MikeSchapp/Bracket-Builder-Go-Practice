@@ -1,4 +1,4 @@
-package bracketfunctions
+package functions
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func GetHTML(url string) string {
 	return newHTML
 }
 
-// RegexParser : Used to find all regex matches within text
+// RegexParser : Used to find all regex matches within text, returns an array of an array of strings
 func RegexParser(text string, regex string) [][]string {
 	r, _ := regexp.Compile(regex)
 	data := r.FindAllStringSubmatch(text, -1)

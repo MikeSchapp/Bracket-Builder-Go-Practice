@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bracketBuilder/bracketfunctions"
-	"bracketBuilder/myStructs"
+	"bracketbuilder/functions"
+	"bracketbuilder/structs"
 	"encoding/json"
 	"fmt"
 )
@@ -16,15 +16,15 @@ func main() {
 		"myRegex":  `<ul class="gamePod-game-teams">\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*<span class="gamePod-game-team-name">(.*)</span>\n.*<span class="gamePod-game-team-score">(.*)</span>\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*<span class="gamePod-game-team-name">(.*)</span>\n.*<span class="gamePod-game-team-score">(.*)</span>`,
 	}
 
-	m := make(map[string]myStructs.JSONStruct)
+	m := make(map[string]structs.JSONStruct)
 	for dateIndex := range dates {
 		dateURL := MyMap["rootUrl"] + dates[dateIndex] + MyMap["ending"]
 		fmt.Println(dateURL)
-		rawHTML := bracketfunctions.GetHTML(dateURL)
-		iterator := bracketfunctions.RegexParser(rawHTML, MyMap["myRegex"])
+		rawHTML := functions.GetHTML(dateURL)
+		iterator := functions.RegexParser(rawHTML, MyMap["myRegex"])
 		for i := range iterator {
 			//iterates through all matches by group i being the group and 1-4 being the actual data points
-			bracketfunctions.GameIterator(i, iterator, m, dates, dateIndex)
+			functions.GameIterator(i, iterator, m, dates, dateIndex)
 		}
 	}
 	trial, err := json.Marshal(m)
@@ -34,5 +34,5 @@ func main() {
 	newJSON := string(trial)
 	fmt.Println(newJSON)
 
-	bracketfunctions.TextWriter(newJSON, "test", "json")
+	bracketbuilder.TextWriter(newJSON, "test", "json")
 }
