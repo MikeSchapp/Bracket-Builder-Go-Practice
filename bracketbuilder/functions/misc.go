@@ -9,11 +9,11 @@ import (
 )
 
 // GetHTML : returns the html content of a specified url
-func GetHTML(url string) string {
+func GetHTML(url string) (string, error) {
 	resp, err := http.Get(url)
 	// handle the error
 	if err != nil {
-		panic(err)
+		return "Failure", err
 	}
 	// remember to close the response body
 	defer resp.Body.Close()
@@ -23,7 +23,7 @@ func GetHTML(url string) string {
 	length := len(html)
 	// convert byte array into a string
 	newHTML := string(html[:length])
-	return newHTML
+	return newHTML, err
 }
 
 // RegexParser : Used to find all regex matches within text, returns an array of an array of strings

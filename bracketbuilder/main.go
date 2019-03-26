@@ -5,6 +5,7 @@ import (
 	"bracketbuilder/structs"
 	"encoding/json"
 	"fmt"
+	"sync"
 )
 
 func main() {
@@ -15,18 +16,31 @@ func main() {
 		"ending":   "/all-conf",
 		"myRegex":  `<ul class="gamePod-game-teams">\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*<span class="gamePod-game-team-name">(.*)</span>\n.*<span class="gamePod-game-team-score">(.*)</span>\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*\n.*<span class="gamePod-game-team-name">(.*)</span>\n.*<span class="gamePod-game-team-score">(.*)</span>`,
 	}
-
 	m := make(map[string]structs.JSONStruct)
+	var lock sync.RWMutex
+	var wg sync.WaitGroup
 	for dateIndex := range dates {
 		dateURL := MyMap["rootUrl"] + dates[dateIndex] + MyMap["ending"]
 		fmt.Println(dateURL)
-		rawHTML := functions.GetHTML(dateURL)
+		rawHTML, err := functions.GetHTML(dateURL)
+		if err != nil {
+			panic(err)
+		}
 		iterator := functions.RegexParser(rawHTML, MyMap["myRegex"])
 		for i := range iterator {
-			//iterates through all matches by group i being the group and 1-4 being the actual data points
-			functions.GameIterator(i, iterator, m, dates, dateIndex)
+			wg.Add(1)
+			go func(i int) {
+				lock.Lock()
+				newMap := functions.GameIterator(i, iterator, dates, dateIndex)
+				for k, v := range newMap {
+					m[k] = v
+				}
+				lock.Unlock()
+			}(i)
+			wg.Done()
 		}
 	}
+	wg.Wait()
 	trial, err := json.Marshal(m)
 	if err != nil {
 		panic(err)
@@ -34,5 +48,5 @@ func main() {
 	newJSON := string(trial)
 	fmt.Println(newJSON)
 
-	bracketbuilder.TextWriter(newJSON, "test", "json")
+	functions.TextWriter(newJSON, "test", "json")
 }
