@@ -29,9 +29,9 @@ func main() {
 		iterator := functions.RegexParser(rawHTML, MyMap["myRegex"])
 		for i := range iterator {
 			wg.Add(1)
+			lock.Lock()
 			go func(i int) {
-				lock.Lock()
-				newMap := functions.GameIterator(i, iterator, dates, dateIndex)
+				newMap := functions.GameIterator(i, iterator, m, dates, dateIndex)
 				for k, v := range newMap {
 					m[k] = v
 				}

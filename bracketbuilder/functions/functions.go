@@ -3,8 +3,7 @@ package functions
 import "bracketbuilder/structs"
 
 //GameIterator  Takes a index value for i, the iterator object constructed from RegEx Parser, a map of JSONstructs and a list of dates
-func GameIterator(i int, iterator [][]string, dates []string, dateIndex int) map[string]structs.JSONStruct {
-	m := make(map[string]structs.JSONStruct)
+func GameIterator(i int, iterator [][]string, m map[string]structs.JSONStruct, dates []string, dateIndex int) map[string]structs.JSONStruct {
 	if iterator[i][2] > iterator[i][4] {
 		if _, ok := m[iterator[i][1]]; ok {
 			wonGame := structs.Game{Date: dates[dateIndex], Team: iterator[i][3]}
